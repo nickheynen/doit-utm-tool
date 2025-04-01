@@ -99,14 +99,25 @@
                 min-width: 250px;
             }
             
-            .params-column fieldset {
-                height: 100%;
+            .params-column {
                 display: flex;
                 flex-direction: column;
             }
             
-            .params-column button {
-                margin-top: auto;
+            .button-container {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            
+            /* On desktop, push button to bottom of params column */
+            @media (min-width: 1000px) {
+                .params-column {
+                    height: 100%;
+                }
+                
+                .button-container {
+                    margin-top: auto;
+                }
             }
             
             .optional-params-grid {
@@ -427,8 +438,11 @@
                             <input type="text" id="content" name="content" placeholder="e.g., button, banner">
                         </div>
                     </div>
-                    <button id="generateBtn" type="button">Generate UTM Links</button>
                 </fieldset>
+                
+                <div class="button-container">
+                    <button id="generateBtn" type="button" aria-label="Generate UTM Links for selected channels">Generate UTM Links</button>
+                </div>
             </div>
         </div>
     </form>
