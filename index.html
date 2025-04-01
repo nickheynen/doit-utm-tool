@@ -32,15 +32,21 @@
         }
         
         .uw-body {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
             color: var(--text-color);
-            line-height: 1.5;
+            line-height: 1.4;
         }
         
         .form-group { 
-            margin-bottom: 20px; 
+            margin-bottom: 15px; 
+        }
+        
+        /* Adjust main content padding for more compact layout */
+        .uw-pad-xl {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
         }
         
         label { 
@@ -53,21 +59,64 @@
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
             gap: var(--spacing-unit); 
-            margin-bottom: 15px; 
+            margin-bottom: 10px; 
         }
         
         .optional-params-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: var(--spacing-unit) calc(var(--spacing-unit) * 2);
-            margin-bottom: 15px;
+            gap: var(--spacing-unit);
+            margin-bottom: 10px;
         }
         
         fieldset {
             border: 1px solid var(--border-color);
             border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        /* For desktop screens, use more columns to reduce vertical space */
+        /* Desktop layout optimizations to reduce vertical space */
+        @media (min-width: 900px) {
+            .checkbox-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .desktop-layout {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            
+            .channel-columns {
+                flex: 3;
+                min-width: 600px;
+            }
+            
+            .params-column {
+                flex: 1;
+                min-width: 250px;
+            }
+            
+            .params-column fieldset {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .params-column button {
+                margin-top: auto;
+            }
+            
+            .optional-params-grid {
+                display: block;
+            }
+            
+            /* Smaller checkbox text for more compact display */
+            .checkbox-item label {
+                font-size: 0.9em;
+            }
         }
         
         legend {
@@ -165,10 +214,21 @@
         
         .instructions { 
             background: var(--light-bg); 
-            padding: 15px; 
-            margin-bottom: 20px; 
+            padding: 10px 15px; 
+            margin-bottom: 15px; 
             border-left: 4px solid var(--primary-color);
             border-radius: 0 4px 4px 0;
+        }
+        
+        /* Make headings and legends more compact */
+        .uw-mini-bar {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        legend h3 {
+            font-size: 1em !important;
         }
         
         .error-text {
@@ -264,7 +324,7 @@
             <h2 class="uw-mini-bar">UTM Link Builder Tool</h2>
             
             <div class="instructions">
-                Enter a URL, select where it will be shared, add optional parameters, and click "Generate UTM Links" to create tracking links.
+                Enter a URL, select distribution channels, add optional parameters, and click "Generate UTM Links" to create tracking links.
             </div>
     
     <form id="formContainer">
@@ -273,101 +333,104 @@
             <input type="text" id="baseUrl" name="baseUrl" placeholder="https://example.wisc.edu" aria-required="true" autocomplete="url">
         </div>
         
-        <div class="form-group">
-            <fieldset>
-                <legend><h3>DoIT Channels</h3></legend>
-                <div class="checkbox-grid">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="doitnet" name="channels" data-medium="referral">
-                        <label for="doitnet">DoITnet</label>
+        <div class="desktop-layout">
+            <!-- Distribution Channels -->
+            <div class="form-group channel-columns">
+                <fieldset>
+                    <legend><h3>DoIT Channels</h3></legend>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doitnet" name="channels" data-medium="referral">
+                            <label for="doitnet">DoITnet</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="it_news" name="channels" data-medium="referral">
+                            <label for="it_news">IT News</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doit_connection" name="channels" data-medium="email">
+                            <label for="doit_connection">DoIT Connection</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doit_technews_facstaff" name="channels" data-medium="email">
+                            <label for="doit_technews_facstaff">TechNews (Faculty/Staff)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doit_technews_students" name="channels" data-medium="email">
+                            <label for="doit_technews_students">TechNews (Students)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doit_linkedin" name="channels" data-medium="social">
+                            <label for="doit_linkedin">DoIT LinkedIn</label>
+                        </div>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="it_news" name="channels" data-medium="referral">
-                        <label for="it_news">IT News</label>
+                </fieldset>
+                
+                <fieldset>
+                    <legend><h3>University Tools</h3></legend>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="eloqua" name="channels" data-medium="email">
+                            <label for="eloqua">Eloqua <span class="note">(non-TechNews/Connection)</span></label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="go_wisc_edu" name="channels" data-medium="referral">
+                            <label for="go_wisc_edu">go.wisc.edu</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="lighthouse_letters" name="channels" data-medium="email">
+                            <label for="lighthouse_letters">Lighthouse Letters</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="qrcode" name="channels" data-medium="referral">
+                            <label for="qrcode">QR code</label>
+                        </div>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="doit_connection" name="channels" data-medium="email">
-                        <label for="doit_connection">DoIT Connection</label>
+                </fieldset>
+                
+                <fieldset>
+                    <legend><h3>Partners</h3></legend>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ctlm" name="channels" data-medium="referral">
+                            <label for="ctlm">CTLM</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="planners_picks" name="channels" data-medium="email">
+                            <label for="planners_picks">Planners Picks</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="smph_in_the_know" name="channels" data-medium="email">
+                            <label for="smph_in_the_know">SMPH In the Know</label>
+                        </div>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="doit_technews_facstaff" name="channels" data-medium="email">
-                        <label for="doit_technews_facstaff">TechNews (Faculty/Staff)</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="doit_technews_students" name="channels" data-medium="email">
-                        <label for="doit_technews_students">TechNews (Students)</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="doit_linkedin" name="channels" data-medium="social">
-                        <label for="doit_linkedin">DoIT LinkedIn</label>
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </div>
             
-            <fieldset>
-                <legend><h3>University Tools</h3></legend>
-                <div class="checkbox-grid">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="eloqua" name="channels" data-medium="email">
-                        <label for="eloqua">Eloqua <span class="note">(non-TechNews/Connection)</span></label>
+            <!-- Optional Parameters -->
+            <div class="form-group params-column">
+                <fieldset>
+                    <legend><h3>Optional Parameters</h3></legend>
+                    <div class="optional-params-grid">
+                        <div class="param-item">
+                            <label for="campaign">Campaign</label>
+                            <input type="text" id="campaign" name="campaign" placeholder="e.g., spring_campaign">
+                        </div>
+                        
+                        <div class="param-item">
+                            <label for="term">Term</label>
+                            <input type="text" id="term" name="term" placeholder="e.g., keyword">
+                        </div>
+                        
+                        <div class="param-item">
+                            <label for="content">Content</label>
+                            <input type="text" id="content" name="content" placeholder="e.g., button, banner">
+                        </div>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="go_wisc_edu" name="channels" data-medium="referral">
-                        <label for="go_wisc_edu">go.wisc.edu</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="lighthouse_letters" name="channels" data-medium="email">
-                        <label for="lighthouse_letters">Lighthouse Letters</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="qrcode" name="channels" data-medium="referral">
-                        <label for="qrcode">QR code</label>
-                    </div>
-                </div>
-            </fieldset>
-            
-            <fieldset>
-                <legend><h3>Partners</h3></legend>
-                <div class="checkbox-grid">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="ctlm" name="channels" data-medium="referral">
-                        <label for="ctlm">CTLM</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="planners_picks" name="channels" data-medium="email">
-                        <label for="planners_picks">Planners Picks</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="smph_in_the_know" name="channels" data-medium="email">
-                        <label for="smph_in_the_know">SMPH In the Know</label>
-                    </div>
-                </div>
-            </fieldset>
+                    <button id="generateBtn" type="button">Generate UTM Links</button>
+                </fieldset>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <fieldset>
-                <legend><h3>Optional Parameters</h3></legend>
-                <div class="optional-params-grid">
-                    <div class="param-item">
-                        <label for="campaign">Campaign</label>
-                        <input type="text" id="campaign" name="campaign" placeholder="e.g., spring_campaign">
-                    </div>
-                    
-                    <div class="param-item">
-                        <label for="term">Term</label>
-                        <input type="text" id="term" name="term" placeholder="e.g., keyword">
-                    </div>
-                    
-                    <div class="param-item">
-                        <label for="content">Content</label>
-                        <input type="text" id="content" name="content" placeholder="e.g., button, banner">
-                    </div>
-                </div>
-            </fieldset>
-        </div>
-        
-        <button id="generateBtn" type="button">Generate UTM Links</button>
     </form>
     
     <div id="errorMessages" class="error-text" role="alert" aria-live="assertive"></div>
