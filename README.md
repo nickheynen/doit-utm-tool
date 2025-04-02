@@ -9,6 +9,7 @@ A simple, accessible web tool for creating UTM-tagged links for communication ch
 - Generate UTM-tagged URLs for various DoIT and university communication channels
 - Predefined source and medium parameters for each channel
 - Support for optional campaign, term, and content parameters
+- Link history tracking to review and reuse previously created links
 - Clean, responsive interface that works on all devices
 - Accessibility features for keyboard navigation and screen readers
 - Copy functionality for individual URLs or all generated URLs at once
@@ -22,6 +23,7 @@ A simple, accessible web tool for creating UTM-tagged links for communication ch
 3. (Optional) Add campaign, term, or content parameters
 4. Click "Generate UTM Links" to create your tracking URLs
 5. Copy links individually or use "Copy All URLs" to get all at once
+6. View previously generated links in the Link History section
 
 ## UTM Parameter Format
 
@@ -71,6 +73,18 @@ The tool works in all modern browsers:
 - Chrome, Firefox, Safari, Edge (latest versions)
 - Mobile browsers on iOS and Android
 - Internet Explorer 11 (with fallback copy functionality)
+
+## Link History
+
+The tool includes a link history feature that:
+
+- Automatically saves all generated UTM links
+- Stores details including base URL, campaign, term, and content parameters
+- Displays links with timestamps showing when they were created
+- Allows copying of previously created links directly from the history
+- Persists between browser sessions using localStorage
+- Provides option to clear history when needed
+- Limits storage to the 50 most recent link sets
 
 ## Development
 

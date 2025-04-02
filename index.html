@@ -29,6 +29,7 @@
             --secondary-btn-color: #666;
             --text-color: #333;
             --spacing-unit: 10px;
+            --gray-bg: #f0f0f0;
         }
         
         .uw-body {
@@ -301,8 +302,78 @@
             margin-bottom: 15px;
         }
         
+        /* Link History Styles */
+        #linkHistory {
+            margin-top: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .history-header {
+            background-color: var(--gray-bg);
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .history-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .history-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .history-content.open {
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        
+        .history-entry {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .history-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .history-entry h3 {
+            margin-top: 0;
+            font-size: 1rem;
+        }
+        
+        .history-entry p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .history-entry .url-container {
+            margin-top: 5px;
+        }
+        
+        .history-meta {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .clear-history-btn {
+            background: var(--secondary-btn-color);
+            margin-left: auto;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+        }
+        
         @media (prefers-reduced-motion: reduce) {
-            button {
+            button, .history-content {
                 transition: none;
             }
         }
@@ -450,6 +521,17 @@
     <div id="errorMessages" class="error-text" role="alert" aria-live="assertive"></div>
     
     <div id="results" aria-live="polite"></div>
+    
+    <!-- Link History Section -->
+    <div id="linkHistory">
+        <div class="history-header">
+            <h2>Link History</h2>
+            <button id="clearHistoryBtn" class="clear-history-btn">Clear History</button>
+        </div>
+        <div class="history-content" id="historyContent">
+            <!-- History entries will be dynamically added here -->
+        </div>
+    </div>
         </div>
     </main>
     <!-- We're removing the UW theme scripts since they're causing 404 errors -->
@@ -467,6 +549,9 @@
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             const resultsDiv = document.getElementById('results');
             const errorDiv = document.getElementById('errorMessages');
+            const historyHeader = document.querySelector('.history-header');
+            const historyContent = document.getElementById('historyContent');
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
             
             // Copy text to clipboard with modern API and fallback
             function copyToClipboard(text, button) {
@@ -527,6 +612,148 @@
                 document.body.removeChild(tempTextarea);
             }
             
+            // Link History Functions
+            function saveToHistory(links) {
+                // Get existing history or initialize empty array
+                let history = JSON.parse(localStorage.getItem('utmLinkHistory') || '[]');
+                
+                // Add new entry with timestamp
+                const entry = {
+                    timestamp: new Date().toISOString(),
+                    baseUrl: baseUrlInput.value.trim(),
+                    campaign: campaignInput.value.trim(),
+                    term: termInput.value.trim(),
+                    content: contentInput.value.trim(),
+                    links: links
+                };
+                
+                // Add to beginning of array (most recent first)
+                history.unshift(entry);
+                
+                // Limit history to 50 entries
+                if (history.length > 50) {
+                    history = history.slice(0, 50);
+                }
+                
+                // Save back to localStorage
+                localStorage.setItem('utmLinkHistory', JSON.stringify(history));
+                
+                // Update history display
+                displayHistory();
+            }
+            
+            function displayHistory() {
+                // Get history from localStorage
+                const history = JSON.parse(localStorage.getItem('utmLinkHistory') || '[]');
+                
+                // Clear current history content
+                historyContent.innerHTML = '';
+                
+                if (history.length === 0) {
+                    // No history yet
+                    historyContent.innerHTML = '<div class="history-entry"><p>No link history yet.</p></div>';
+                    return;
+                }
+                
+                // Add each history entry
+                history.forEach((entry, index) => {
+                    const historyEntry = document.createElement('div');
+                    historyEntry.className = 'history-entry';
+                    
+                    // Format timestamp
+                    const date = new Date(entry.timestamp);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                    
+                    // Create metadata line
+                    const meta = document.createElement('div');
+                    meta.className = 'history-meta';
+                    meta.textContent = `Created: ${formattedDate}`;
+                    
+                    // Create base URL info
+                    const baseInfo = document.createElement('h3');
+                    baseInfo.textContent = entry.baseUrl;
+                    
+                    // Create campaign info if available
+                    let campaignInfo = '';
+                    if (entry.campaign) campaignInfo = `Campaign: ${entry.campaign}`;
+                    if (entry.term) campaignInfo += campaignInfo ? `, Term: ${entry.term}` : `Term: ${entry.term}`;
+                    if (entry.content) campaignInfo += campaignInfo ? `, Content: ${entry.content}` : `Content: ${entry.content}`;
+                    
+                    const campaignElem = document.createElement('p');
+                    campaignElem.textContent = campaignInfo || 'No additional parameters';
+                    
+                    // Add entry elements
+                    historyEntry.appendChild(meta);
+                    historyEntry.appendChild(baseInfo);
+                    historyEntry.appendChild(campaignElem);
+                    
+                    // Add first 3 links (to keep it manageable)
+                    const maxLinksToShow = Math.min(3, entry.links.length);
+                    for (let i = 0; i < maxLinksToShow; i++) {
+                        const link = entry.links[i];
+                        
+                        // Container for link
+                        const linkContainer = document.createElement('div');
+                        linkContainer.className = 'url-container';
+                        
+                        // Source info
+                        const sourceInfo = document.createElement('p');
+                        sourceInfo.innerHTML = `<strong>${link.publication}</strong>`;
+                        
+                        // URL input
+                        const urlText = document.createElement('input');
+                        urlText.type = 'text';
+                        urlText.value = link.url;
+                        urlText.readOnly = true;
+                        urlText.className = 'url-input';
+                        urlText.setAttribute('aria-label', `URL for ${link.publication}`);
+                        
+                        // Add click handler to select all text
+                        urlText.addEventListener('click', function() {
+                            this.select();
+                        });
+                        
+                        // Copy button
+                        const copyBtn = document.createElement('button');
+                        copyBtn.textContent = 'Copy';
+                        copyBtn.className = 'copy-btn';
+                        copyBtn.setAttribute('aria-label', `Copy URL for ${link.publication} to clipboard`);
+                        copyBtn.addEventListener('click', function() {
+                            copyToClipboard(link.url, this);
+                        });
+                        
+                        linkContainer.appendChild(sourceInfo);
+                        linkContainer.appendChild(urlText);
+                        linkContainer.appendChild(copyBtn);
+                        
+                        historyEntry.appendChild(linkContainer);
+                    }
+                    
+                    // Add "more links" message if needed
+                    if (entry.links.length > maxLinksToShow) {
+                        const moreLinks = document.createElement('p');
+                        moreLinks.textContent = `+ ${entry.links.length - maxLinksToShow} more links`;
+                        moreLinks.style.color = '#666';
+                        moreLinks.style.fontStyle = 'italic';
+                        historyEntry.appendChild(moreLinks);
+                    }
+                    
+                    historyContent.appendChild(historyEntry);
+                });
+            }
+            
+            function clearHistory() {
+                if (confirm('Are you sure you want to clear your link history? This action cannot be undone.')) {
+                    localStorage.removeItem('utmLinkHistory');
+                    displayHistory();
+                }
+            }
+            
+            // Toggle history visibility function
+            function toggleHistory() {
+                historyContent.classList.toggle('open');
+            }
+            
             // Reset form function
             function resetForm() {
                 // Reset the form by showing it again
@@ -555,6 +782,11 @@
             
             // Initialize event listeners
             generateBtn.addEventListener('click', generateLinks);
+            historyHeader.addEventListener('click', toggleHistory);
+            clearHistoryBtn.addEventListener('click', clearHistory);
+            
+            // Initialize history display on load
+            displayHistory();
             
             // Validate URL
             function isValidUrl(url) {
@@ -841,6 +1073,9 @@
                     });
                     
                     resultsDiv.appendChild(resultsContainer);
+                    
+                    // Save generated links to history
+                    saveToHistory(generatedUrls);
                 }
             }
         });
