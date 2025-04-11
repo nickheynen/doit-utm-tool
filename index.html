@@ -332,7 +332,7 @@
         }
         
         .history-content.open {
-            max-height: 800px;
+            max-height: 100vh;
             overflow-y: auto;
         }
         
@@ -343,16 +343,6 @@
         
         .history-entry:last-child {
             border-bottom: none;
-        }
-        
-        .history-entry h3 {
-            margin-top: 0;
-            font-size: 1rem;
-        }
-        
-        .history-entry p {
-            margin: 5px 0;
-            font-size: 0.9rem;
         }
         
         .history-entry .url-container {
@@ -370,6 +360,69 @@
             margin-left: auto;
             font-size: 0.8rem;
             padding: 5px 10px;
+        }
+        
+        /* New Domain-based History Styles */
+        .domain-groups {
+            width: 100%;
+        }
+        
+        .domain-section {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .domain-header {
+            background-color: var(--primary-color);
+            color: white;
+            margin: 0;
+            padding: 8px 15px;
+            font-size: 1.1rem;
+        }
+        
+        .domain-entries {
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .path-info {
+            font-weight: bold;
+            margin: 5px 0;
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+        
+        .campaign-info {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #444;
+        }
+        
+        .expand-links-btn {
+            background-color: #e0e0e0;
+            color: #333;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        
+        .expand-links-btn:hover, .expand-links-btn:focus {
+            background-color: #c5c5c5;
+        }
+        
+        .links-container {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dotted var(--border-color);
+        }
+        
+        .links-container .url-container {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #f5f5f5;
+            border-radius: 3px;
         }
         
         @media (prefers-reduced-motion: reduce) {
@@ -525,11 +578,11 @@
     <!-- Link History Section -->
     <div id="linkHistory">
         <div class="history-header">
-            <h2>Link History</h2>
+            <h2>Link History (Grouped by Domain)</h2>
             <button id="clearHistoryBtn" class="clear-history-btn">Clear History</button>
         </div>
         <div class="history-content" id="historyContent">
-            <!-- History entries will be dynamically added here -->
+            <!-- History entries will be dynamically added here grouped by domain -->
         </div>
     </div>
         </div>
@@ -642,6 +695,38 @@
                 displayHistory();
             }
             
+            // Extract domain name from URL
+            function extractDomain(url) {
+                try {
+                    const urlObj = new URL(url);
+                    return urlObj.hostname;
+                } catch (e) {
+                    // If URL parsing fails, try a simple regex extraction
+                    const match = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/im);
+                    return match ? match[1] : '';
+                }
+            }
+            
+            // Group entries by domain
+            function groupEntriesByDomain(history) {
+                const domainGroups = {};
+                
+                history.forEach(entry => {
+                    // Get base domain from URL
+                    const domain = extractDomain(entry.baseUrl);
+                    
+                    // Initialize domain group if it doesn't exist
+                    if (!domainGroups[domain]) {
+                        domainGroups[domain] = [];
+                    }
+                    
+                    // Add entry to its domain group
+                    domainGroups[domain].push(entry);
+                });
+                
+                return domainGroups;
+            }
+            
             function displayHistory() {
                 // Get history from localStorage
                 const history = JSON.parse(localStorage.getItem('utmLinkHistory') || '[]');
@@ -655,91 +740,148 @@
                     return;
                 }
                 
-                // Add each history entry
-                history.forEach((entry, index) => {
-                    const historyEntry = document.createElement('div');
-                    historyEntry.className = 'history-entry';
+                // Group entries by domain
+                const domainGroups = groupEntriesByDomain(history);
+                
+                // Create a container for domains
+                const domainsContainer = document.createElement('div');
+                domainsContainer.className = 'domain-groups';
+                
+                // Process each domain group
+                Object.entries(domainGroups).forEach(([domain, entries]) => {
+                    // Create domain section
+                    const domainSection = document.createElement('div');
+                    domainSection.className = 'domain-section';
                     
-                    // Format timestamp
-                    const date = new Date(entry.timestamp);
-                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                    // Create domain header
+                    const domainHeader = document.createElement('h3');
+                    domainHeader.className = 'domain-header';
+                    domainHeader.textContent = domain;
+                    domainSection.appendChild(domainHeader);
                     
-                    // Create metadata line
-                    const meta = document.createElement('div');
-                    meta.className = 'history-meta';
-                    meta.textContent = `Created: ${formattedDate}`;
+                    // Create entries container for this domain
+                    const entriesContainer = document.createElement('div');
+                    entriesContainer.className = 'domain-entries';
                     
-                    // Create base URL info
-                    const baseInfo = document.createElement('h3');
-                    baseInfo.textContent = entry.baseUrl;
-                    
-                    // Create campaign info if available
-                    let campaignInfo = '';
-                    if (entry.campaign) campaignInfo = `Campaign: ${entry.campaign}`;
-                    if (entry.term) campaignInfo += campaignInfo ? `, Term: ${entry.term}` : `Term: ${entry.term}`;
-                    if (entry.content) campaignInfo += campaignInfo ? `, Content: ${entry.content}` : `Content: ${entry.content}`;
-                    
-                    const campaignElem = document.createElement('p');
-                    campaignElem.textContent = campaignInfo || 'No additional parameters';
-                    
-                    // Add entry elements
-                    historyEntry.appendChild(meta);
-                    historyEntry.appendChild(baseInfo);
-                    historyEntry.appendChild(campaignElem);
-                    
-                    // Add first 3 links (to keep it manageable)
-                    const maxLinksToShow = Math.min(3, entry.links.length);
-                    for (let i = 0; i < maxLinksToShow; i++) {
-                        const link = entry.links[i];
+                    // Add each entry for this domain
+                    entries.forEach(entry => {
+                        // Create entry row
+                        const entryRow = document.createElement('div');
+                        entryRow.className = 'history-entry';
                         
-                        // Container for link
-                        const linkContainer = document.createElement('div');
-                        linkContainer.className = 'url-container';
+                        // Format timestamp
+                        const date = new Date(entry.timestamp);
+                        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
                         
-                        // Source info
-                        const sourceInfo = document.createElement('p');
-                        sourceInfo.innerHTML = `<strong>${link.publication}</strong>`;
+                        // Create metadata with timestamp
+                        const meta = document.createElement('div');
+                        meta.className = 'history-meta';
+                        meta.textContent = `Created: ${formattedDate}`;
                         
-                        // URL input
-                        const urlText = document.createElement('input');
-                        urlText.type = 'text';
-                        urlText.value = link.url;
-                        urlText.readOnly = true;
-                        urlText.className = 'url-input';
-                        urlText.setAttribute('aria-label', `URL for ${link.publication}`);
+                        // Create path info (excluding domain)
+                        let path = '';
+                        try {
+                            const urlObj = new URL(entry.baseUrl);
+                            path = urlObj.pathname + urlObj.search + urlObj.hash;
+                        } catch (e) {
+                            path = entry.baseUrl.split(domain)[1] || '';
+                        }
                         
-                        // Add click handler to select all text
-                        urlText.addEventListener('click', function() {
-                            this.select();
+                        const pathInfo = document.createElement('div');
+                        pathInfo.className = 'path-info';
+                        pathInfo.textContent = path || '/';
+                        
+                        // Create campaign info if available
+                        let campaignInfo = '';
+                        if (entry.campaign) campaignInfo = `Campaign: ${entry.campaign}`;
+                        if (entry.term) campaignInfo += campaignInfo ? `, Term: ${entry.term}` : `Term: ${entry.term}`;
+                        if (entry.content) campaignInfo += campaignInfo ? `, Content: ${entry.content}` : `Content: ${entry.content}`;
+                        
+                        const campaignElem = document.createElement('p');
+                        campaignElem.className = 'campaign-info';
+                        campaignElem.textContent = campaignInfo || 'No additional parameters';
+                        
+                        // Create expand button to show/hide links
+                        const expandBtn = document.createElement('button');
+                        expandBtn.className = 'expand-links-btn';
+                        expandBtn.textContent = 'Show Links';
+                        expandBtn.setAttribute('aria-expanded', 'false');
+                        
+                        // Create links container
+                        const linksContainer = document.createElement('div');
+                        linksContainer.className = 'links-container';
+                        linksContainer.style.display = 'none';
+                        
+                        // Add all links for this entry
+                        entry.links.forEach(link => {
+                            // Container for link
+                            const linkContainer = document.createElement('div');
+                            linkContainer.className = 'url-container';
+                            
+                            // Source info
+                            const sourceInfo = document.createElement('p');
+                            sourceInfo.innerHTML = `<strong>${link.publication}</strong>`;
+                            
+                            // URL input
+                            const urlText = document.createElement('input');
+                            urlText.type = 'text';
+                            urlText.value = link.url;
+                            urlText.readOnly = true;
+                            urlText.className = 'url-input';
+                            urlText.setAttribute('aria-label', `URL for ${link.publication}`);
+                            
+                            // Add click handler to select all text
+                            urlText.addEventListener('click', function() {
+                                this.select();
+                            });
+                            
+                            // Copy button
+                            const copyBtn = document.createElement('button');
+                            copyBtn.textContent = 'Copy';
+                            copyBtn.className = 'copy-btn';
+                            copyBtn.setAttribute('aria-label', `Copy URL for ${link.publication} to clipboard`);
+                            copyBtn.addEventListener('click', function() {
+                                copyToClipboard(link.url, this);
+                            });
+                            
+                            linkContainer.appendChild(sourceInfo);
+                            linkContainer.appendChild(urlText);
+                            linkContainer.appendChild(copyBtn);
+                            
+                            linksContainer.appendChild(linkContainer);
                         });
                         
-                        // Copy button
-                        const copyBtn = document.createElement('button');
-                        copyBtn.textContent = 'Copy';
-                        copyBtn.className = 'copy-btn';
-                        copyBtn.setAttribute('aria-label', `Copy URL for ${link.publication} to clipboard`);
-                        copyBtn.addEventListener('click', function() {
-                            copyToClipboard(link.url, this);
+                        // Toggle links visibility on expand button click
+                        expandBtn.addEventListener('click', function() {
+                            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                            this.setAttribute('aria-expanded', !isExpanded);
+                            this.textContent = isExpanded ? 'Show Links' : 'Hide Links';
+                            linksContainer.style.display = isExpanded ? 'none' : 'block';
                         });
                         
-                        linkContainer.appendChild(sourceInfo);
-                        linkContainer.appendChild(urlText);
-                        linkContainer.appendChild(copyBtn);
+                        // Add components to entry row
+                        entryRow.appendChild(meta);
+                        entryRow.appendChild(pathInfo);
+                        entryRow.appendChild(campaignElem);
+                        entryRow.appendChild(expandBtn);
+                        entryRow.appendChild(linksContainer);
                         
-                        historyEntry.appendChild(linkContainer);
-                    }
+                        // Add entry to domain entries container
+                        entriesContainer.appendChild(entryRow);
+                    });
                     
-                    // Add "more links" message if needed
-                    if (entry.links.length > maxLinksToShow) {
-                        const moreLinks = document.createElement('p');
-                        moreLinks.textContent = `+ ${entry.links.length - maxLinksToShow} more links`;
-                        moreLinks.style.color = '#666';
-                        moreLinks.style.fontStyle = 'italic';
-                        historyEntry.appendChild(moreLinks);
-                    }
+                    // Add entries container to domain section
+                    domainSection.appendChild(entriesContainer);
                     
-                    historyContent.appendChild(historyEntry);
+                    // Add domain section to domains container
+                    domainsContainer.appendChild(domainSection);
                 });
+                
+                // Add domains container to history content
+                historyContent.appendChild(domainsContainer);
+                
+                // Automatically open history when displaying new content
+                autoOpenHistory();
             }
             
             function clearHistory() {
@@ -752,6 +894,11 @@
             // Toggle history visibility function
             function toggleHistory() {
                 historyContent.classList.toggle('open');
+            }
+            
+            // Auto-open history when history is displayed
+            function autoOpenHistory() {
+                historyContent.classList.add('open');
             }
             
             // Reset form function
