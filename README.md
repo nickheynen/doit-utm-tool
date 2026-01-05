@@ -95,6 +95,15 @@ To modify or extend the tool:
 - JavaScript code is in the `<script>` section at the bottom
 - No build process or dependencies required
 
+## Security
+
+This tool implements security best practices:
+
+- **XSS Prevention**: All user-provided data is rendered using `textContent` and `createTextNode` instead of `innerHTML` to prevent cross-site scripting attacks
+- **Input Sanitization**: UTM parameters are sanitized to remove special characters
+- **Client-Side Only**: No data is sent to external servers; all processing happens locally
+- **localStorage**: Link history is stored locally in the browser and never transmitted
+
 ## License
 
 [MIT License](LICENSE)

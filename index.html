@@ -820,7 +820,9 @@
                             
                             // Source info
                             const sourceInfo = document.createElement('p');
-                            sourceInfo.innerHTML = `<strong>${link.publication}</strong>`;
+                            const pubStrong = document.createElement('strong');
+                            pubStrong.textContent = link.publication;
+                            sourceInfo.appendChild(pubStrong);
                             
                             // URL input
                             const urlText = document.createElement('input');
@@ -1182,7 +1184,14 @@
                         pubHeader.textContent = pubName;
                         
                         const sourceInfo = document.createElement('p');
-                        sourceInfo.innerHTML = `<strong>Source:</strong> ${item.source}, <strong>Medium:</strong> ${item.medium}`;
+                        const sourceLabel = document.createElement('strong');
+                        sourceLabel.textContent = 'Source:';
+                        const mediumLabel = document.createElement('strong');
+                        mediumLabel.textContent = 'Medium:';
+                        sourceInfo.appendChild(sourceLabel);
+                        sourceInfo.appendChild(document.createTextNode(' ' + item.source + ', '));
+                        sourceInfo.appendChild(mediumLabel);
+                        sourceInfo.appendChild(document.createTextNode(' ' + item.medium));
                         
                         const urlContainer = document.createElement('div');
                         urlContainer.style.display = 'flex';
