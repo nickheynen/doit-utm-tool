@@ -14,7 +14,8 @@
     
     <!-- UW Templates and Styles -->
     <link rel="stylesheet" crossorigin type="text/css" href="https://cdn.wisc.cloud/fonts/uw-rh/0.0.1/fonts.css" />
-    <link rel="stylesheet" href="https://it.wisc.edu/wp-content/themes/uw-theme/dist/main.min.css">
+    <link rel="stylesheet" href="https://it.wisc.edu/wp-content/themes/uw-theme-gutenberg/build/css/theme-styles.css?x45421&ver=7ca661939fbc840e14b1">
+    <link rel="stylesheet" href="https://it.wisc.edu/wp-content/themes/uw-theme-gutenberg-child/style.css?x45421&ver=1777392753">
     
     <!-- Favicons - using only basic favicon to avoid CORS issues -->
     <link rel="shortcut icon" href="https://it.wisc.edu/favicon.ico">
@@ -22,14 +23,15 @@
     
     <style>
         :root {
-            --primary-color: #c5050c;
-            --primary-hover: #990000;
-            --light-bg: #f9f9f9;
-            --border-color: #ddd;
+            --primary-color: var(--wp--preset--color--primary, #c5050c);
+            --primary-hover: var(--wp--preset--color--primary-dark, #9b0000);
+            --light-bg: var(--wp--custom--color--contrast-light, #f3f3f3);
+            --border-color: var(--wp--custom--color--border, #cfcfcf);
+            --input-border-color: #767676; /* darker than --border-color for WCAG 1.4.11 (3:1 against white) */
             --secondary-btn-color: #666;
-            --text-color: #333;
-            --spacing-unit: 10px;
-            --gray-bg: #f0f0f0;
+            --text-color: var(--wp--custom--color--text, #121212);
+            --spacing-unit: 0.625rem;
+            --gray-bg: var(--wp--custom--color--contrast-light, #f3f3f3);
         }
         
         .uw-body {
@@ -94,15 +96,12 @@
                 flex: 3;
                 min-width: 600px;
             }
-            
-            .params-column {
-                flex: 1;
-                min-width: 250px;
-            }
-            
+
             .params-column {
                 display: flex;
                 flex-direction: column;
+                flex: 1;
+                min-width: 250px;
             }
             
             .button-container {
@@ -132,12 +131,9 @@
         }
         
         legend {
+            font-size: 1em;
+            font-weight: var(--wp--custom--font-weight--bold, 640);
             padding: 0 8px;
-        }
-        
-        legend h3 {
-            margin: 0;
-            font-size: 1.1em;
         }
         
         .param-item label {
@@ -175,11 +171,11 @@
             margin-right: 8px;
         }
         
-        input[type="text"] { 
-            width: 100%; 
-            padding: 8px; 
-            margin-bottom: var(--spacing-unit); 
-            border: 1px solid var(--border-color);
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: var(--spacing-unit);
+            border: 1px solid var(--input-border-color);
             border-radius: 4px;
             box-sizing: border-box;
         }
@@ -239,9 +235,6 @@
             font-size: 1.3rem;
         }
         
-        legend h3 {
-            font-size: 1em !important;
-        }
         
         .error-text {
             color: var(--primary-color);
@@ -285,7 +278,7 @@
             flex: 1;
             font-family: monospace;
             padding: 8px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--input-border-color);
             border-radius: 4px;
         }
         
@@ -311,18 +304,38 @@
         }
         
         .history-header {
+            align-items: center;
             background-color: var(--gray-bg);
-            padding: 10px 15px;
-            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
+            padding: 10px 15px;
         }
         
         .history-header h2 {
             margin: 0;
             font-size: 1.2rem;
+        }
+
+        .history-toggle-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            padding: 0;
+            text-align: left;
+        }
+
+        .history-toggle-btn:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .history-toggle-btn:hover {
+            text-decoration: underline;
         }
         
         .history-content {
@@ -332,8 +345,8 @@
         }
         
         .history-content.open {
-            max-height: 100vh;
-            overflow-y: auto;
+            max-height: 5000px;
+            overflow-y: visible;
         }
         
         .history-entry {
@@ -472,7 +485,7 @@
             <!-- Distribution Channels -->
             <div class="form-group channel-columns">
                 <fieldset>
-                    <legend><h3>DoIT Channels</h3></legend>
+                    <legend>DoIT Channels</legend>
                     <div class="checkbox-grid">
                         <div class="checkbox-item">
                             <input type="checkbox" id="doitnet" name="channels" data-medium="referral">
@@ -502,7 +515,7 @@
                 </fieldset>
                 
                 <fieldset>
-                    <legend><h3>University Tools</h3></legend>
+                    <legend>University Tools</legend>
                     <div class="checkbox-grid">
                         <div class="checkbox-item">
                             <input type="checkbox" id="eloqua" name="channels" data-medium="email">
@@ -524,7 +537,7 @@
                 </fieldset>
                 
                 <fieldset>
-                    <legend><h3>Partners</h3></legend>
+                    <legend>Partners</legend>
                     <div class="checkbox-grid">
                         <div class="checkbox-item">
                             <input type="checkbox" id="ctlm" name="channels" data-medium="referral">
@@ -545,7 +558,7 @@
             <!-- Optional Parameters -->
             <div class="form-group params-column">
                 <fieldset>
-                    <legend><h3>Optional Parameters</h3></legend>
+                    <legend>Optional Parameters</legend>
                     <div class="optional-params-grid">
                         <div class="param-item">
                             <label for="campaign">Campaign</label>
@@ -578,7 +591,11 @@
     <!-- Link History Section -->
     <div id="linkHistory">
         <div class="history-header">
-            <h2>Link History (Grouped by Domain)</h2>
+            <h2>
+                <button id="historyToggleBtn" class="history-toggle-btn" aria-expanded="false" aria-controls="historyContent">
+                    Link History (Grouped by Domain)
+                </button>
+            </h2>
             <button id="clearHistoryBtn" class="clear-history-btn">Clear History</button>
         </div>
         <div class="history-content" id="historyContent">
@@ -590,7 +607,7 @@
     <!-- We're removing the UW theme scripts since they're causing 404 errors -->
     <!-- The visual styling from UW theme CSS will still be applied -->
     
-    <script defer>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
             const formEl = document.getElementById('formContainer');
@@ -602,10 +619,35 @@
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             const resultsDiv = document.getElementById('results');
             const errorDiv = document.getElementById('errorMessages');
-            const historyHeader = document.querySelector('.history-header');
+            const historyToggleBtn = document.getElementById('historyToggleBtn');
             const historyContent = document.getElementById('historyContent');
             const clearHistoryBtn = document.getElementById('clearHistoryBtn');
             
+            // localStorage helpers — guard against SecurityError in private browsing
+            function getHistory() {
+                try {
+                    return JSON.parse(localStorage.getItem('utmLinkHistory') || '[]');
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function setHistory(history) {
+                try {
+                    localStorage.setItem('utmLinkHistory', JSON.stringify(history));
+                } catch (e) {
+                    // Unavailable (e.g., private browsing on some browsers)
+                }
+            }
+
+            function clearStoredHistory() {
+                try {
+                    localStorage.removeItem('utmLinkHistory');
+                } catch (e) {
+                    // ignore
+                }
+            }
+
             // Copy text to clipboard with modern API and fallback
             function copyToClipboard(text, button) {
                 // Try to use modern clipboard API first
@@ -667,10 +709,8 @@
             
             // Link History Functions
             function saveToHistory(links) {
-                // Get existing history or initialize empty array
-                let history = JSON.parse(localStorage.getItem('utmLinkHistory') || '[]');
-                
-                // Add new entry with timestamp
+                let history = getHistory();
+
                 const entry = {
                     timestamp: new Date().toISOString(),
                     baseUrl: baseUrlInput.value.trim(),
@@ -679,19 +719,14 @@
                     content: contentInput.value.trim(),
                     links: links
                 };
-                
-                // Add to beginning of array (most recent first)
+
                 history.unshift(entry);
-                
-                // Limit history to 50 entries
+
                 if (history.length > 50) {
                     history = history.slice(0, 50);
                 }
-                
-                // Save back to localStorage
-                localStorage.setItem('utmLinkHistory', JSON.stringify(history));
-                
-                // Update history display
+
+                setHistory(history);
                 displayHistory();
             }
             
@@ -728,9 +763,9 @@
             }
             
             function displayHistory() {
-                // Get history from localStorage
-                const history = JSON.parse(localStorage.getItem('utmLinkHistory') || '[]');
-                
+                const history = getHistory();
+                let entryCounter = 0;
+
                 // Clear current history content
                 historyContent.innerHTML = '';
                 
@@ -802,14 +837,18 @@
                         campaignElem.textContent = campaignInfo || 'No additional parameters';
                         
                         // Create expand button to show/hide links
+                        const containerId = `links-container-${entryCounter++}`;
                         const expandBtn = document.createElement('button');
                         expandBtn.className = 'expand-links-btn';
                         expandBtn.textContent = 'Show Links';
                         expandBtn.setAttribute('aria-expanded', 'false');
-                        
+                        expandBtn.setAttribute('aria-controls', containerId);
+                        expandBtn.setAttribute('aria-label', `Show links for ${path || '/'}`);
+
                         // Create links container
                         const linksContainer = document.createElement('div');
                         linksContainer.className = 'links-container';
+                        linksContainer.id = containerId;
                         linksContainer.style.display = 'none';
                         
                         // Add all links for this entry
@@ -858,6 +897,7 @@
                             const isExpanded = this.getAttribute('aria-expanded') === 'true';
                             this.setAttribute('aria-expanded', !isExpanded);
                             this.textContent = isExpanded ? 'Show Links' : 'Hide Links';
+                            this.setAttribute('aria-label', isExpanded ? `Show links for ${path || '/'}` : `Hide links for ${path || '/'}`);
                             linksContainer.style.display = isExpanded ? 'none' : 'block';
                         });
                         
@@ -888,19 +928,21 @@
             
             function clearHistory() {
                 if (confirm('Are you sure you want to clear your link history? This action cannot be undone.')) {
-                    localStorage.removeItem('utmLinkHistory');
+                    clearStoredHistory();
                     displayHistory();
                 }
             }
             
-            // Toggle history visibility function
+            // Toggle history visibility
             function toggleHistory() {
-                historyContent.classList.toggle('open');
+                const isOpen = historyContent.classList.toggle('open');
+                historyToggleBtn.setAttribute('aria-expanded', String(isOpen));
             }
-            
-            // Auto-open history when history is displayed
+
+            // Auto-open history when displaying new content
             function autoOpenHistory() {
                 historyContent.classList.add('open');
+                historyToggleBtn.setAttribute('aria-expanded', 'true');
             }
             
             // Reset form function
@@ -931,8 +973,11 @@
             
             // Initialize event listeners
             generateBtn.addEventListener('click', generateLinks);
-            historyHeader.addEventListener('click', toggleHistory);
-            clearHistoryBtn.addEventListener('click', clearHistory);
+            historyToggleBtn.addEventListener('click', toggleHistory);
+            clearHistoryBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                clearHistory();
+            });
             
             // Initialize history display on load
             displayHistory();
@@ -1106,7 +1151,8 @@
                 selectedCheckboxes.forEach(checkbox => {
                     const source = checkbox.id;
                     const medium = checkbox.dataset.medium || 'referral';
-                    const publication = checkbox.nextElementSibling.textContent;
+                    const labelEl = checkbox.nextElementSibling;
+                    const publication = labelEl.childNodes[0].textContent.trim();
                     
                     // Build UTM URL with parameters
                     const utmParams = {
@@ -1133,10 +1179,10 @@
                 const newLinksBtn = document.createElement('button');
                 newLinksBtn.textContent = 'Create New Links';
                 newLinksBtn.className = 'reset-btn';
-                newLinksBtn.setAttribute('aria-label', 'Create new UTM links');
                 newLinksBtn.addEventListener('click', resetForm);
-                
+
                 resultsDiv.appendChild(newLinksBtn);
+                newLinksBtn.focus(); // move focus to results (WCAG 2.4.3)
                 
                 // Check if URL has existing UTM parameters and notify user
                 if (hasUtmParameters(formattedBaseUrl)) {
@@ -1174,14 +1220,8 @@
                         const resultDiv = document.createElement('div');
                         resultDiv.className = 'result';
                         
-                        // Clean up publication name (remove any notes in parentheses)
-                        let pubName = item.publication;
-                        if (pubName.includes('(')) {
-                            pubName = pubName.substring(0, pubName.indexOf('(')).trim();
-                        }
-                        
                         const pubHeader = document.createElement('h3');
-                        pubHeader.textContent = pubName;
+                        pubHeader.textContent = item.publication;
                         
                         const sourceInfo = document.createElement('p');
                         const sourceLabel = document.createElement('strong');
@@ -1194,8 +1234,6 @@
                         sourceInfo.appendChild(document.createTextNode(' ' + item.medium));
                         
                         const urlContainer = document.createElement('div');
-                        urlContainer.style.display = 'flex';
-                        urlContainer.style.alignItems = 'center';
                         urlContainer.className = 'url-container';
                         
                         const urlText = document.createElement('input');
@@ -1203,17 +1241,17 @@
                         urlText.value = item.url;
                         urlText.readOnly = true;
                         urlText.className = 'url-input';
-                        urlText.setAttribute('aria-label', `URL for ${pubName}`);
-                        
+                        urlText.setAttribute('aria-label', `URL for ${item.publication}`);
+
                         // Add click handler to select all text
                         urlText.addEventListener('click', function() {
                             this.select();
                         });
-                        
+
                         const copyBtn = document.createElement('button');
                         copyBtn.textContent = 'Copy';
                         copyBtn.className = 'copy-btn';
-                        copyBtn.setAttribute('aria-label', `Copy URL for ${pubName} to clipboard`);
+                        copyBtn.setAttribute('aria-label', `Copy URL for ${item.publication} to clipboard`);
                         copyBtn.addEventListener('click', function() {
                             copyToClipboard(item.url, this);
                         });
