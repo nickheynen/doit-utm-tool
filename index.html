@@ -443,6 +443,95 @@
                 transition: none;
             }
         }
+
+        /* UW TEMPLATE HEADER BEGIN */
+        /* The Gutenberg theme CSS covers content/form styles but omits these
+           classic UW Template structural classes used in the standalone header. */
+        .uw-show-on-focus {
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            clip: rect(0, 0, 0, 0);
+            color: var(--primary-color);
+            display: block;
+            font-weight: 700;
+            left: 5px;
+            padding: 8px 12px;
+            position: absolute;
+            text-decoration: none;
+            top: -100px;
+            z-index: 100;
+        }
+
+        .uw-show-on-focus:focus {
+            clip: auto;
+            top: 5px;
+        }
+
+        .uw-global-bar {
+            background: #1c1c1c;
+            padding: 6px 15px;
+        }
+
+        .uw-global-name-link {
+            color: #fff;
+            font-size: var(--wp--custom--font-size--14, 0.875rem);
+            font-weight: var(--wp--custom--font-weight--regular, 400);
+            text-decoration: none;
+        }
+
+        .uw-global-name-link:hover {
+            text-decoration: underline;
+        }
+
+        .uw-header {
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+
+        .uw-header-container {
+            margin: 0 auto;
+            max-width: 1200px;
+            padding: 0 15px;
+        }
+
+        .uw-header-crest-title {
+            align-items: center;
+            display: flex;
+            gap: 15px;
+        }
+
+        .uw-crest-svg {
+            height: 70px;
+            width: auto;
+        }
+
+        .uw-title-tagline {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .uw-site-title {
+            font-size: 1.5rem;
+            font-weight: var(--wp--custom--font-weight--heading-bold, 900);
+            margin: 0 0 4px;
+        }
+
+        .uw-site-title a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .uw-site-title a:hover {
+            text-decoration: underline;
+        }
+
+        .uw-site-tagline {
+            color: var(--text-color);
+            font-size: var(--wp--custom--font-size--14, 0.875rem);
+            margin: 0;
+        }
+        /* UW TEMPLATE HEADER END */
     </style>
 </head>
 <body>
@@ -455,7 +544,7 @@
         <div class="uw-header-container">
             <div class="uw-header-crest-title">
                 <div class="uw-header-crest">
-                    <a href="https://www.wisc.edu"><img class="uw-crest-svg" src="https://it.wisc.edu/wp-content/themes/uw-theme/dist/images/uw-crest.svg" alt="Link to University of Wisconsin-Madison home page"></a>
+                    <a href="https://www.wisc.edu"><img class="uw-crest-svg" src="uwmadison_templates/images/uw-crest.svg" alt="Link to University of Wisconsin–Madison home page"></a>
                 </div>
                 <div class="uw-title-tagline">
                     <h1 id="site-title" class="uw-site-title">
